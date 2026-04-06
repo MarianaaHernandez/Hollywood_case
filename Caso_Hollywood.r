@@ -79,3 +79,30 @@ summary(model_5b)
 # 5c.
 coef(model_5b)["Sequel"]
 # Manteniendo Budget fijo, una secuela genera ~$30.5M más en taquilla doméstica
+
+# PUNTO 6: Regresión pre-opening weekend - Opening Gross
+# 6a. Modelo completo: factores pre-producción + factores del opening weekend
+model_6a <- lm(Opening.Gross ~ Budget + Is_Comedy + MPAA_D + Known.Story + Sequel +
+                 Summer + Holiday + Christmas + Opening.Theatres,
+               data = data)
+summary(model_6a)
+
+# 6b. Modelo final: solo variables significativas al 10%
+# Se conservan: Budget (p=0.003), Sequel (p=0.006), Opening.Theatres (p<0.001)
+model_6b <- lm(Opening.Gross ~ Budget + Sequel + Opening.Theatres,
+               data = data)
+summary(model_6b)
+
+# 6c. Coeficientes 
+coef(model_6b)
+
+# 6d. IC 95% para el cambio en Opening Gross si Opening.Theatres aumenta en 100
+b_th  <- coef(model_6b)["Opening.Theatres"]
+se_th <- summary(model_6b)$coefficients["Opening.Theatres", "Std. Error"]
+t_crit <- qt(0.975, df = df.residual(model_6b))
+
+# Resultados con print
+print(paste("Estimación puntual (+100 teatros):", round(100 * b_th)))
+print(paste("IC 95%: [",
+            round(100 * (b_th - t_crit * se_th)), ",",
+            round(100 * (b_th + t_crit * se_th)), "]"))
