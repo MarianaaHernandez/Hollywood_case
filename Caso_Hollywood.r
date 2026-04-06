@@ -106,3 +106,63 @@ print(paste("Estimación puntual (+100 teatros):", round(100 * b_th)))
 print(paste("IC 95%: [",
             round(100 * (b_th - t_crit * se_th)), ",",
             round(100 * (b_th + t_crit * se_th)), "]"))
+
+# PUNTO 7: Total US Gross vs Opening Gross – "regla del 25%"
+# 7a. Regresión simple
+model_7a <- lm(Total.U.S..Gross ~ Opening.Gross, data = data)
+summary(model_7a)
+
+# 7b. Mostrar slopes
+print(paste("Slope estimado:", round(coef(model_7a)["Opening.Gross"], 4)))
+print("Slope que implicaría la regla del 25%: 4.0")
+
+# 7c. Prueba de hipótesis: H0: slope = 4
+b7   <- coef(model_7a)["Opening.Gross"]
+se7  <- summary(model_7a)$coefficients["Opening.Gross", "Std. Error"]
+t7c  <- (b7 - 4.0) / se7
+p7c  <- 2 * pt(abs(t7c), df = df.residual(model_7a), lower.tail = FALSE)
+
+print(paste("t =", round(t7c, 4), "| p-valor =", round(p7c, 6)))
+#Se rechaza H0: el slope es significativamente distinto de 4.0
+
+# 7e. Modelo sin intercepto (forzado al origen)
+model_7e <- lm(Total.U.S..Gross ~ Opening.Gross - 1, data = data)
+summary(model_7e)
+
+# 7f. Prueba con modelo sin intercepto: H0: slope = 4.0
+b7e  <- coef(model_7e)["Opening.Gross"]
+se7e <- summary(model_7e)$coefficients["Opening.Gross", "Std. Error"]
+t7f  <- (b7e - 4.0) / se7e
+p7f  <- 2 * pt(abs(t7f), df = df.residual(model_7e), lower.tail = FALSE)
+
+print(paste("Slope sin intercepto:", round(b7e, 4)))
+print(paste("t =", round(t7f, 4), "| p-valor =", round(p7f, 8)))
+
+# Conclusión: Se sigue rechazando H0: el opening representa ~30%, no el 25%
+
+# 7g. R² del modelo simple
+r2 <- summary(model_7a)$r.squared
+print(paste("R² =", round(r2, 4)))
+print(paste("El opening weekend explica el", round(r2 * 100, 2),
+            "% de la variación en Total US Gross"))
+
+# Gráfico: Total US Gross vs Opening Gross con líneas de regresión
+ggplot(data, aes(x = Opening.Gross / 1e6, y = Total.U.S..Gross / 1e6)) +
+  geom_point(color = "steelblue", alpha = 0.7, size = 2.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "darkred",
+              linewidth = 1, aes(linetype = "Con intercepto")) +
+  geom_abline(slope = 4, intercept = 0,
+              color = "darkorange", linetype = "dashed", linewidth = 1) +
+  geom_abline(slope = coef(model_7e)["Opening.Gross"], intercept = 0,
+              color = "darkgreen", linetype = "dotted", linewidth = 1) +
+  labs(
+    title = "Total US Gross vs Opening Weekend Gross",
+    x = "Opening Gross (millones USD)",
+    y = "Total US Gross (millones USD)",
+    caption = paste0(
+      "Rojo (slope=", round(b7, 2), ")",
+      "  |  Naranja (slope=4.0)",
+      "  |  Verde (slope=", round(b7e, 2), ")"
+    )
+  ) +
+  theme_minimal()
