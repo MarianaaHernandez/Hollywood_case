@@ -56,3 +56,7 @@ t.test(Total.U.S..Gross ~ (Genre == "Comedy"), data = data)
 
 # B. Diferencia en el ROI entre comedias y no comedias
 t.test(ROI_US ~ (Genre == "Comedy"), data = data)
+
+#PUNTO 4: Peliculas R vs no R
+# Diferencia en ingresos entre películas R y no R
+t.test(Total.U.S..Gross ~ MPAA_D, data = data)
