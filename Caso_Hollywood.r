@@ -49,3 +49,10 @@ t.test(data$ROI_US)
 # C. Es mayor al 12%
 t.test(data$ROI_US, mu = 0.12, alternative = "greater")
 ## El ROI promedio de las películas es significativamente mayor al 12% (p-value < 0.05), lo que sugiere que, en promedio, las películas generan un retorno sobre la inversión superior al 12%.
+
+#PUNTO 3: comparar el ROI entre comedias y no comedias
+# A. calcular diferencia en ingresos
+t.test(Total.U.S..Gross ~ (Genre == "Comedy"), data = data)
+
+# B. Diferencia en el ROI entre comedias y no comedias
+t.test(ROI_US ~ (Genre == "Comedy"), data = data)
