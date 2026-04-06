@@ -60,3 +60,22 @@ t.test(ROI_US ~ (Genre == "Comedy"), data = data)
 #PUNTO 4: Peliculas R vs no R
 # Diferencia en ingresos entre películas R y no R
 t.test(Total.U.S..Gross ~ MPAA_D, data = data)
+
+# PUNTO 5: Regresión pre-producción - Total US Gross
+data <- data %>%
+  mutate(Is_Comedy = as.integer(Genre == "Comedy"))
+
+# 5a. Modelo completo con todos los factores de pre-producción
+model_5a <- lm(Total.U.S..Gross ~ Budget + Is_Comedy + MPAA_D + Known.Story + Sequel,
+               data = data)
+summary(model_5a)
+
+# 5b. Modelo final: eliminar variables con p > 0.10
+# Is_Comedy (p=0.103), MPAA_D (p=0.688), Known.Story (p=0.230) - se eliminan
+model_5b <- lm(Total.U.S..Gross ~ Budget + Sequel,
+               data = data)
+summary(model_5b)
+
+# 5c.
+coef(model_5b)["Sequel"]
+# Manteniendo Budget fijo, una secuela genera ~$30.5M más en taquilla doméstica
