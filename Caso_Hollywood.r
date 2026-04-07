@@ -168,12 +168,26 @@ ggplot(data, aes(x = Opening.Gross / 1e6, y = Total.U.S..Gross / 1e6)) +
   theme_minimal()
 
 #PUNTO 8: Opinion de los criticos
-#Modelo 4: Regresión para predecir la opinión de los críticos
+#A. Modelo 4: Regresión para predecir la opinión de los críticos
 model4 <- lm(Total.U.S..Gross ~ Opening.Gross + Critics..Opinion + Budget + Sequel + MPAA_D, data = data)
 summary(model4)
 
-#B y C son escritos 
+#B. modelo sin variables no significativas
+model4_final <- lm(Total.U.S..Gross ~ Opening.Gross + Critics..Opinion + Budget + MPAA_D, data = data)
+summary(model4_final)
 
+#C. predicción con el modelo final
+
+predict(model4_final, newdata = data.frame(
+  Opening.Gross = 10245000,   
+  Critics..Opinion = 73,      
+  Budget = 90000000,          
+  MPAA_D = 1
+), interval = "prediction")
+
+
+
+coef(model4_final)["Critics..Opinion"]
 #Que impacto tiene un +10 puntos en la opinión de los críticos
 coef(model4)["Critics..Opinion"] * 10
 
