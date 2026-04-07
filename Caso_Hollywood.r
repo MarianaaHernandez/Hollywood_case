@@ -166,3 +166,18 @@ ggplot(data, aes(x = Opening.Gross / 1e6, y = Total.U.S..Gross / 1e6)) +
     )
   ) +
   theme_minimal()
+
+#PUNTO 8: Opinion de los criticos
+#Modelo 4: Regresión para predecir la opinión de los críticos
+model4 <- lm(Total.U.S..Gross ~ Opening.Gross + Critics..Opinion + Budget + Sequel + MPAA_D, data = data)
+summary(model4)
+
+#B y C son escritos 
+
+#Que impacto tiene un +10 puntos en la opinión de los críticos
+coef(model4)["Critics..Opinion"] * 10
+
+#PUNTO 9: Iteracción comedia y opinión de los críticos
+#Modelo 5: Regresión con interacción entre comedia y opinión de los críticos
+model5 <- lm(Total.U.S..Gross ~ Opening.Gross + Critics..Opinion * (Genre == "Comedy") + Critics..Opinion:(Genre == "Comedy"), data = data)
+summary(model5)
