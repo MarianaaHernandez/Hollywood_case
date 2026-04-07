@@ -5,8 +5,8 @@ library(readr)
 library(readxl)
 
 # Cargar los datos
-setwd('/Users/maru/Desktop/Javeriana/4/Analitica de los negocios/Caso Hollywood')
-data <- read_xls('Datos_Hollywood.xls', sheet = 2)
+setwd('/Users/maru/Desktop/Javeriana/4/Analitica de los negocios/Caso Hollywood/Hollywood_case')
+data <- read_xls('Datos__Hollywood.xls', sheet = 2)
 
 #Visualización nombres de las columnas
 colnames(data)
